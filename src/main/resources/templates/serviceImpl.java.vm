@@ -1,0 +1,79 @@
+package com.astar.sharetalent.web.service.impl;
+
+#set($oEntity = ${entity})
+#set($entityVo = ${oEntity}+"Vo")
+#set($entityDo = ${oEntity}+"Do")
+
+import com.astar.sharetalent.web.entity.${entityDo};
+import com.astar.sharetalent.web.vo.${entityVo};
+import com.astar.sharetalent.web.dao.${table.mapperName};
+import com.astar.sharetalent.web.service.${table.serviceName};
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+import com.astar.sharetalent.common.base.PageVo;
+import com.astar.sharetalent.util.WrapperUtil;
+import java.util.List;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import org.springframework.transaction.annotation.Transactional;
+
+
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+@Service
+#if(${kotlin})
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entityDo} >(), ${table.serviceName} {
+
+}
+#else
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entityDo} > implements ${table.serviceName} {
+
+    /**新增**/
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ${entityVo}  add(${entityVo} entity) {
+        ${entityDo} entityDo = new ${entityDo}();
+        super.insert(entity.copyPropertiesTo(entityDo));
+        return entityDo.copyPropertiesTo(entity);
+    }
+
+    /**根据ID查询**/
+    @Override
+    public ${entityVo}  selectById(Long id) {
+        ${entityDo}  entity = super.selectById(id);
+        if(entity == null){
+            return null;
+        }
+        return entity.copyPropertiesTo(new ${entityVo} ());
+    }
+
+    /**分页查询**/
+    @Override
+    public PageVo<${entityVo} > selectList(${entityVo}  entity) {
+        Wrapper wrapper = WrapperUtil.getWrapperByVO(entity);
+        Page<${entityDo} > returnPage = super.selectPage(entity.plusPage(), wrapper);
+        return new PageVo(returnPage,${entityVo} .class);
+    }
+
+    /**根据ID更新**/
+    @Override
+    @Transactional
+    public void updateById(${entityVo}  entity) {
+        super.updateById(entity.copyPropertiesTo(new ${entityDo}()));
+    }
+
+    /**批量删除**/
+    @Override
+    @Transactional
+    public void deleteBatchIds(List<Long> longs) {
+        super.deleteBatchIds(longs);
+    }
+
+}
+#end

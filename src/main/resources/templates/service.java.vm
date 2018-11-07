@@ -1,0 +1,40 @@
+package com.astar.sharetalent.web.service;
+
+#set($oEntity = ${entity})
+#set($oEntity = ${oEntity}+"Vo")
+
+import com.astar.sharetalent.web.vo.${oEntity};
+import com.astar.sharetalent.common.base.PageVo;
+import java.util.List;
+
+/**
+ * <p>
+ * $!{table.comment} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+#if(${kotlin})
+interface ${table.serviceName}<${oEntity}>
+#else
+public interface ${table.serviceName}{
+
+    /**新增**/
+    ${oEntity} add(${oEntity} entity);
+
+    /**根据ID查询**/
+    ${oEntity} selectById(Long id);
+
+    /**分页查询**/
+    PageVo<${oEntity}> selectList(${oEntity} entity);
+
+    /**根据ID更新**/
+    void updateById(${oEntity} entity);
+
+    /**批量删除**/
+    void deleteBatchIds(List<Long> ids);
+
+
+}
+#end

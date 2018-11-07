@@ -1,0 +1,120 @@
+package com.astar.sharetalent.web.controller;
+
+#set($oEntity = ${entity})
+#set($oEntity = ${oEntity}+"Vo")
+import com.astar.sharetalent.web.vo.${oEntity};
+import com.astar.sharetalent.common.base.PageVo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+#if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+#else
+import org.springframework.stereotype.Controller;
+#end
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+import com.astar.sharetalent.web.service.${table.serviceName};
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.NotEmpty;
+import java.util.Date;
+import java.util.Arrays;
+import javax.validation.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+
+
+/**
+ * <p>
+ * $!{table.comment}前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@Validated
+@RequestMapping("/${cfg.controllerDir}/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen.toLowerCase()}#else${table.entityPath.toLowerCase().replaceFirst(${cfg.controllerDir},"")}#end")
+@Api(tags = {"${table.controllerName}"},description = "$!{table.comment}接口")
+@Slf4j
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+    @Autowired
+    private ${table.serviceName} service;
+
+    /**
+    * 根据$!{table.comment}ID查询
+    */
+    @GetMapping("/query/{id}")
+    @ApiOperation(value = "/query/{id}",notes = "根据$!{table.comment}ID查询",response = ${oEntity}.class)
+    public ${oEntity} query(@PathVariable Long id) {
+        ${oEntity} entity = service.selectById(id);
+        return entity;
+    }
+
+    /**
+    * 查询$!{table.comment}分页方法
+    */
+    @ApiOperation(value = "/queryListPage",notes = "查询$!{table.comment}分页方法")
+    @PostMapping("/queryListPage")
+    public PageVo<${oEntity}> queryListPage(${oEntity} entity) {
+        PageVo<${oEntity}> pageVo = (PageVo<${oEntity}>) service.selectList(entity);
+        return pageVo;
+    }
+
+    /**
+     * 新增$!{table.comment}方法
+     */
+    @ApiOperation(value = "/add",notes = "新增$!{table.comment}方法",response = ${oEntity}.class)
+    @PostMapping("/add")
+    public ${oEntity} add(@Valid ${oEntity} entity) {
+        entity.setCreateDate(new Date());
+        entity.setModifyDate(new Date());
+        ${oEntity} entityVo = service.add(entity);
+        return entityVo;
+    }
+
+    /**
+     * 修改$!{table.comment}方法
+     */
+    @ApiOperation(value = "/update",notes = "修改$!{table.comment}方法",response = ${oEntity}.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "修改id",example="1",required = true,dataType = "long",paramType = "query"),
+    })
+    @PostMapping("/update")
+    public void update(@Valid ${oEntity} entity) {
+        entity.setModifyDate(new Date());
+        service.updateById(entity);
+    }
+
+    /**
+     * 批量删除$!{table.comment}方法
+     */
+    @ApiOperation(value = "/delBatchByIds",notes = "批量删除$!{table.comment}方法")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids",value = "删除id,逗号分隔",example="1,2,3",required = true,dataType = "String",paramType = "query"),
+    })
+    @PostMapping("/delBatchByIds")
+    public void delBatchByIds(@NotEmpty(message = "ids不能为空") Long[] ids) {
+        service.deleteBatchIds(Arrays.asList(ids));
+    }
+}
+
+#end

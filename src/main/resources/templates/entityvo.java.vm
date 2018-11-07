@@ -1,0 +1,50 @@
+package com.astar.sharetalent.web.vo;
+
+#set($oEntity = ${entity})
+#set($oEntity = ${oEntity}+"Vo")
+
+import com.alibaba.fastjson.annotation.JSONField;
+import java.util.Date;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import com.astar.sharetalent.common.base.BaseVo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ * <p>
+ * $!{table.comment} vo
+ * </p>
+ *
+ * @author ${author}
+ * @date ${date}
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Accessors(chain = true)
+@ApiModel(value="$!{table.comment}",description="$!{table.comment}")
+public class ${oEntity} extends BaseVo{
+
+    private static final long serialVersionUID = 1L;
+
+## ----------  BEGIN 字段循环遍历  ----------
+#foreach($field in ${table.fields})
+    #if("$!field.comment" != "")
+    /**
+     * ${field.comment}
+     */
+    #end
+    #if(${field.propertyName} == "modifyDate" || ${field.propertyName} == "createDate")
+    @ApiModelProperty(hidden = true)
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    #else
+    @ApiModelProperty(value="${field.comment}",name="${field.propertyName}")
+    #end
+    private ${field.propertyType} ${field.propertyName};
+
+#end
+## ----------  END 字段循环遍历  ----------
+
+}
+
