@@ -50,15 +50,11 @@ public class ShiroConfiguration {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
         // 过滤链定义，从上向下顺序执行，一般将 /**放在最为下边
         // authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
-        filterChainDefinitionMap.put("/sys/login", "anon");
-        filterChainDefinitionMap.put("/sys/logout", "anon");
-        filterChainDefinitionMap.put("/sys/captcha","anon");
-        filterChainDefinitionMap.put("/sys/oper/getVerifyCode","anon");
-        filterChainDefinitionMap.put("/sys/loginByMobileNumber","anon");
-        filterChainDefinitionMap.put("/sys/oper/forgetPassword","anon");
         /******** start api小程序接口不鉴权 ********/
         filterChainDefinitionMap.put("/api/**", "anon");
         /******** end api小程序接口不鉴权 ********/
+        /******** start 测试本包manage接口不鉴权 ********/
+        filterChainDefinitionMap.put("/manage/**", "anon");
         /******** start swagger2不鉴权 ********/
         filterChainDefinitionMap.put("/webjars/**", "anon");
         filterChainDefinitionMap.put("/swagger/**", "anon");
